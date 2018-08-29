@@ -1,25 +1,22 @@
 package com.pandaria.scheduler.configuration;
 
-import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.quartz.JobDetailFactoryBean;
-import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.sql.DataSource;
 
 @Configuration
 public class QuartzConfiguration {
 
     @Bean
-    public SchedulerFactoryBean schedulerFactoryBean() {
+    public SchedulerFactoryBean schedulerFactoryBean(@Autowired DataSource dataSource) {
         SchedulerFactoryBean factoryBean = new SchedulerFactoryBean();
         // this allows to update triggers in DB when updating settings in config file:
-        factoryBean.setOverwriteExistingJobs(false);
+        factoryBean.setOverwriteExistingJobs(true);
+        factoryBean.setDataSource(dataSource);
         factoryBean.setStartupDelay(10);
         factoryBean.setAutoStartup(true);
         factoryBean.setApplicationContextSchedulerContextKey("pandaria-scheduler");

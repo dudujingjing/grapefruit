@@ -8,6 +8,9 @@ import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
@@ -21,7 +24,11 @@ import static org.quartz.TriggerBuilder.newTrigger;
  *
  * @author Bill Kratzer
  */
+@Service
 public class SimpleExample {
+
+    @Autowired
+    private SchedulerFactoryBean schedulerFactoryBean;
 
     public void run() throws Exception {
         Logger log = LoggerFactory.getLogger(SimpleExample.class);
@@ -29,8 +36,9 @@ public class SimpleExample {
         log.info("------- Initializing ----------------------");
 
         // First we must get a reference to a scheduler
-        SchedulerFactory sf = new StdSchedulerFactory();
-        Scheduler sched = sf.getScheduler();
+//        SchedulerFactory sf = new StdSchedulerFactory();
+//        Scheduler sched = sf.getScheduler();
+        Scheduler sched = schedulerFactoryBean.getScheduler();
 
         log.info("------- Initialization Complete -----------");
 
@@ -40,8 +48,8 @@ public class SimpleExample {
         log.info("------- Scheduling Job  -------------------");
 
         // define the job and tie it to our HelloJob class
-        JobDetail job = newJob(DefaultQuartzJob.class).withIdentity("job1", "group1").build();
-        JobDetail job2 = newJob(DefaultQuartzJob.class).withIdentity("job2", "group2").build();
+        JobDetail job = newJob(DefaultQuartzJob.class).withIdentity("job3", "group1").storeDurably().build();
+        JobDetail job2 = newJob(DefaultQuartzJob.class).withIdentity("job4", "group2").storeDurably().build();
 
         // Trigger the job to run on the next round minute
         Trigger trigger = newTrigger().withIdentity("trigger1", "group1").startAt(runTime).build();
